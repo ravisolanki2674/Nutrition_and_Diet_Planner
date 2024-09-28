@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Rice",
+        "calories": 206,
+        "protein": 4.3,
+        "fats": 0.4,
+        "carbs": 45,
+        "timestamp": "2024-09-28 11:21:39"
+    },
+    {
+        "name": "Chicken Breast",
+        "calories": 165,
+        "protein": 31,
+        "fats": 3.6,
+        "carbs": 0,
+        "timestamp": "2024-09-28 11:22:02"
+    }
+]

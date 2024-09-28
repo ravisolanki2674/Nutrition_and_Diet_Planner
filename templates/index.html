@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Nutrition and Diet Planner</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #343a40;
+        }
+        .list-group-item {
+            background-color: #f1f1f1;
+            border: none;
+        }
+        .btn {
+            margin-top: 10px;
+        }
+        #goalsSection {
+            display: none; /* Hide goals section initially */
+        }
+        #dietTips {
+            display: none; /* Hide diet tips initially */
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Nutrition and Diet Planner</h1>
+
+        <h2 class="mt-4">Log Your Meal</h2>
+        <form id="mealForm">
+            <div class="form-group">
+                <label for="food_item">Select Food:</label>
+                <select name="food_item" class="form-control" id="food_item">
+                    <option value="" disabled selected>Select food item</option>
+                    <!-- Options will be populated from food_db in the script -->
+                </select>
+
+                <h4 class="mt-4">Or Enter Custom Food:</h4>
+                <input type="text" id="custom_food_item" placeholder="Custom food name" class="form-control">
+                <input type="number" id="custom_calories" placeholder="Calories" class="form-control mt-2">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Log Meal</button>
+        </form>
+
+        <h2 class="mt-4">Logged Meals</h2>
+        <ul id="mealsList" class="list-group">
+            <!-- Logged meals will be displayed here -->
+        </ul>
+
+        <button id="updateGoalsBtn" class="btn btn-success btn-block mt-4">Update Goals</button>
+        <button id="dietTipsBtn" class="btn btn-info btn-block mt-2">Diet Tips</button>
+
+        <div id="goalsSection" class="mt-4">
+            <h2>Set Your Dietary Goals</h2>
+            <form id="goalsForm">
+                <div class="form-group">
+                    <label for="dietary_goal">Select Dietary Goal:</label>
+                    <select name="dietary_goal" class="form-control" required id="dietary_goal">
+                        <option value="" disabled selected>Select your goal</option>
+                        <option value="weight_loss">Weight Loss</option>
+                        <option value="weight_gain">Weight Gain</option>
+                        <option value="maintenance">Maintenance</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Save Goals</button>
+            </form>
+        </div>
+
+        <div id="dietTips" class="mt-4">
+            <h3>Diet Tips</h3>
+            <p>1. Drink plenty of water to stay hydrated.</p>
+            <p>2. Incorporate a variety of foods into your diet.</p>
+            <p>3. Control portion sizes to avoid overeating.</p>
+            <p>4. Focus on whole foods rather than processed options.</p>
+            <p>5. Plan your meals to stay on track with your dietary goals.</p>
+        </div>
+    </div>
+
+    <script>
+        const foodDb = [
+            { "name": "Apple", "calories": 95 },
+            { "name": "Banana", "calories": 105 },
+            { "name": "Chicken Breast", "calories": 165 },
+            { "name": "Broccoli", "calories": 55 },
+            { "name": "Rice", "calories": 206 },
+            // Add more food items as needed
+        ];
+
+        const mealsList = document.getElementById('mealsList');
+        const mealForm = document.getElementById('mealForm');
+        const updateGoalsBtn = document.getElementById('updateGoalsBtn');
+        const dietTipsBtn = document.getElementById('dietTipsBtn');
+        const goalsSection = document.getElementById('goalsSection');
+        const goalsForm = document.getElementById('goalsForm');
+        const dietTips = document.getElementById('dietTips');
+
+        // Populate food options
+        foodDb.forEach(food => {
+            const option = document.createElement('option');
+            option.value = food.name;
+            option.textContent = `${food.name} (${food.calories} kcal)`;
+            document.getElementById('food_item').appendChild(option);
+        });
+
+        // Handle meal logging
+        mealForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const selectedFood = document.getElementById('food_item').value;
+            const customFood = document.getElementById('custom_food_item').value;
+            const customCalories = document.getElementById('custom_calories').value;
+
+            let meal;
+
+            // Check if a food item is selected or if a custom food item is provided
+            if (selectedFood) {
+                meal = {
+                    name: selectedFood,
+                    calories: foodDb.find(food => food.name === selectedFood).calories,
+                };
+            } else if (customFood && customCalories) {
+                meal = {
+                    name: customFood,
+                    calories: customCalories,
+                };
+            } else {
+                alert("Please select a food item or enter a custom food with calories.");
+                return;
+            }
+
+            // Create a list item for the logged meal
+            const mealItem = document.createElement('li');
+            mealItem.classList.add('list-group-item');
+            mealItem.textContent = `${meal.name}: ${meal.calories} kcal`;
+            mealsList.appendChild(mealItem);
+
+            // Reset form fields
+            mealForm.reset();
+            document.getElementById('food_item').value = ""; // Reset dropdown selection
+        });
+
+        // Show goals section when clicking the update goals button
+        updateGoalsBtn.addEventListener('click', function() {
+            goalsSection.style.display = goalsSection.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Show diet tips when clicking the diet tips button
+        dietTipsBtn.addEventListener('click', function() {
+            dietTips.style.display = dietTips.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Handle goal saving
+        goalsForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const selectedGoal = document.getElementById('dietary_goal').value;
+
+            if (selectedGoal === 'weight_loss') {
+                user_goals = {
+                    calories: 1500,
+                    protein: 100,
+                    fats: 50,
+                    carbs: 150
+                };
+            } else if (selectedGoal === 'weight_gain') {
+                user_goals = {
+                    calories: 2500,
+                    protein: 200,
+                    fats: 80,
+                    carbs: 350
+                };
+            } else if (selectedGoal === 'maintenance') {
+                user_goals = {
+                    calories: 2000,
+                    protein: 150,
+                    fats: 70,
+                    carbs: 250
+                };
+            }
+
+            alert('Goals updated successfully!');
+            goalsSection.style.display = 'none'; // Hide goals section after saving
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
